@@ -5,7 +5,7 @@ import joblib
 import pandas as pd
 
 # Load the trained pipeline
-model = joblib.load("spam_classifier_model.pkl")  # Update with your model filename
+model = joblib.load("spam_classifier.pkl")  # Update with your model filename
 
 st.title("Email Spam Classifier")
 st.write("Enter the email subject below to classify it as spam or ham.")
