@@ -3,45 +3,40 @@ import pandas as pd
 import joblib
 import os
 
-st.set_page_config(page_title="📧 Email Spam Classifier", layout="centered")
-
+st.set_page_config(page_title="Spam Classifier", layout="centered")
 st.title("📨 Email Spam Classifier")
-st.write("This app predicts whether an email subject is spam or not based on text and structure.")
 
-MODEL_PATH = "spam_classifier.pkl"
+MODEL_FILE = "spam_classifier.pkl"
 
-# Check if model exists
-if not os.path.exists(MODEL_PATH):
-    st.error("❌ Model file `spam_classifier_model.pkl` not found. Please upload or include it.")
+if not os.path.exists(MODEL_FILE):
+    st.error("❌ Model file 'spam_classifier_model.pkl' not found. Please upload it to the root directory.")
     st.stop()
 
-# Load the model
-model = joblib.load(MODEL_PATH)
+# Load the trained pipeline
+model = joblib.load(MODEL_FILE)
 
-# Input
-subject_input = st.text_input("✉️ Enter Email Subject", placeholder="E.g., WIN a FREE trip NOW!!!")
+subject = st.text_input("✉️ Enter Email Subject", placeholder="e.g., Exclusive DEALS just for YOU!")
 
-if subject_input:
-    # Feature Engineering
-    subject_length = len(subject_input)
-    num_uppercase_words = sum(1 for w in subject_input.split() if w.isupper())
-    num_exclamations = subject_input.count("!")
-    percent_uppercase = sum(1 for c in subject_input if c.isupper()) / (len(subject_input) + 1)
+if subject:
+    # Feature engineering
+    subject_length = len(subject)
+    num_uppercase_words = sum(1 for w in subject.split() if w.isupper())
+    num_exclamations = subject.count("!")
+    percent_uppercase = sum(1 for c in subject if c.isupper()) / (len(subject) + 1)
 
-    # Create input DataFrame
+    # Input DataFrame for model
     input_df = pd.DataFrame([{
-        "Subject": subject_input,
+        "Subject": subject,
         "subject_length": subject_length,
         "num_uppercase_words": num_uppercase_words,
         "num_exclamations": num_exclamations,
         "percent_uppercase": percent_uppercase
     }])
 
-    # Predict
     try:
         prediction = model.predict(input_df)[0]
-        proba = model.predict_proba(input_df)[0][prediction]
+        confidence = model.predict_proba(input_df)[0][prediction]
         label = "📢 Spam" if prediction == 1 else "✅ Ham"
-        st.success(f"**{label}** — Confidence: {proba*100:.2f}%")
+        st.success(f"Prediction: **{label}**\n\nConfidence: **{confidence*100:.2f}%**")
     except Exception as e:
-        st.error(f"⚠️ Error during prediction: {e}")
+        st.error(f"⚠️ Prediction failed: {e}")
