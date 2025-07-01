@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import joblib
@@ -30,6 +29,7 @@ if subject:
     }])
 
     try:
+        # Predict
         pred = model.predict(input_df)[0]
         prob = model.predict_proba(input_df)[0][pred]
         label = "📢 SPAM" if pred else "✅ HAM"
