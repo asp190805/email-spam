@@ -9,7 +9,7 @@ st.title("📧 Email Spam Classifier")
 st.write("Enter the email subject line below. The app will analyze and classify it as either **Spam** or **Ham** based on content and formatting.")
 
 # Check if model file exists
-MODEL_PATH = "spam_classifier_model.pkl"
+MODEL_PATH = "spam_classifier.pkl"
 
 if not os.path.exists(MODEL_PATH):
     st.error(f"❌ Model file `{MODEL_PATH}` not found. Please upload the trained model.")
