@@ -36,3 +36,11 @@ if subject:
         st.success(f"Prediction: **{label}** ({prob * 100:.2f}% confidence)")
     except Exception as e:
         st.error(f"❌ Prediction failed: {e}")
+
+if prob >= 0.75:
+    st.success(f"✅ Confident: **{label}** ({prob*100:.2f}%)")
+elif prob >= 0.5:
+    st.info(f"🤔 Possibly: **{label}** ({prob*100:.2f}%)")
+else:
+    st.warning(f"⚠️ Not confident: **{label}** ({prob*100:.2f}%)")
+
