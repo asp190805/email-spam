@@ -7,7 +7,7 @@ import os
 st.set_page_config(page_title="📨 Spam Classifier", layout="centered")
 st.title("📨 Email Spam Classifier")
 
-MODEL_FILE = "spam_classifier_model.pkl"
+MODEL_FILE = "spam_classifier.pkl"
 
 # Load model
 if not os.path.exists(MODEL_FILE):
