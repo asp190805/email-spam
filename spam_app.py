@@ -3,32 +3,32 @@ import pandas as pd
 import joblib
 import os
 
-st.set_page_config(page_title="Spam Classifier", layout="centered")
+st.set_page_config(page_title="📧 Email Spam Classifier", layout="centered")
 
-st.title("📧 Email Spam Classifier")
-st.write("Enter the email subject line below. The app will analyze and classify it as either **Spam** or **Ham** based on content and formatting.")
+st.title("📨 Email Spam Classifier")
+st.write("This app predicts whether an email subject is spam or not based on text and structure.")
 
-# Check if model file exists
 MODEL_PATH = "spam_classifier.pkl"
 
+# Check if model exists
 if not os.path.exists(MODEL_PATH):
-    st.error(f"❌ Model file `{MODEL_PATH}` not found. Please upload the trained model.")
+    st.error("❌ Model file `spam_classifier_model.pkl` not found. Please upload or include it.")
     st.stop()
 
 # Load the model
 model = joblib.load(MODEL_PATH)
 
-# Input field
-subject_input = st.text_input("✉️ Email Subject", placeholder="e.g., WIN a FREE vacation NOW!!!")
+# Input
+subject_input = st.text_input("✉️ Enter Email Subject", placeholder="E.g., WIN a FREE trip NOW!!!")
 
 if subject_input:
-    # Feature engineering
+    # Feature Engineering
     subject_length = len(subject_input)
     num_uppercase_words = sum(1 for w in subject_input.split() if w.isupper())
     num_exclamations = subject_input.count("!")
     percent_uppercase = sum(1 for c in subject_input if c.isupper()) / (len(subject_input) + 1)
 
-    # Create input dataframe
+    # Create input DataFrame
     input_df = pd.DataFrame([{
         "Subject": subject_input,
         "subject_length": subject_length,
@@ -37,11 +37,11 @@ if subject_input:
         "percent_uppercase": percent_uppercase
     }])
 
-    # Prediction
+    # Predict
     try:
         prediction = model.predict(input_df)[0]
         proba = model.predict_proba(input_df)[0][prediction]
         label = "📢 Spam" if prediction == 1 else "✅ Ham"
-        st.success(f"Result: **{label}** ({proba * 100:.2f}% confidence)")
+        st.success(f"**{label}** — Confidence: {proba*100:.2f}%")
     except Exception as e:
-        st.error(f"⚠️ Prediction failed: {e}")
+        st.error(f"⚠️ Error during prediction: {e}")
