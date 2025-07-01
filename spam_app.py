@@ -1,19 +1,26 @@
 import streamlit as st
 import pandas as pd
 import joblib
+import os
 
-st.title("📨 Spam Classifier")
+st.set_page_config(page_title="📨 Spam Classifier", layout="centered")
+st.title("📨 Email Spam Classifier")
 
-try:
-    model = joblib.load("spam_classifier.pkl")
-except:
-    st.error("❌ Model file not found.")
+MODEL_FILE = "spam_classifier.pkl"
+
+# Load model
+if not os.path.exists(MODEL_FILE):
+    st.error("❌ Model file 'spam_classifier_model.pkl' not found.")
     st.stop()
 
-subject = st.text_input("✉️ Enter email subject")
+model = joblib.load(MODEL_FILE)
+
+# Input
+subject = st.text_input("✉️ Enter Email Subject", placeholder="e.g., WIN a FREE trip NOW!!!")
 
 if subject:
-    data = pd.DataFrame([{
+    # Match structure used during training
+    input_df = pd.DataFrame([{
         "Subject": subject,
         "subject_length": len(subject),
         "num_uppercase_words": sum(1 for w in subject.split() if w.isupper()),
@@ -22,9 +29,9 @@ if subject:
     }])
 
     try:
-        pred = model.predict(data)[0]
-        prob = model.predict_proba(data)[0][pred]
-        label = "📢 Spam" if pred else "✅ Ham"
-        st.success(f"Prediction: **{label}** ({prob*100:.2f}%)")
+        pred = model.predict(input_df)[0]
+        prob = model.predict_proba(input_df)[0][pred]
+        label = "📢 SPAM" if pred else "✅ HAM"
+        st.success(f"Prediction: **{label}** ({prob * 100:.2f}% confidence)")
     except Exception as e:
-        st.error(f"❌ Error: {e}")
+        st.error(f"❌ Prediction failed: {e}")
